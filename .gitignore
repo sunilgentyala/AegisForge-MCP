@@ -1,0 +1,33 @@
+# Rust build artifacts
+target/
+Cargo.lock
+
+# Node / frontend
+node_modules/
+dist/
+.env
+.env.local
+
+# Tauri
+src-tauri/target/
+src-tauri/WixTools/
+gen/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets – never commit
+*.pem
+*.key
+*.crt
+secrets/
+
+# Unpublished manuscripts – do not push to public repos
+paper/

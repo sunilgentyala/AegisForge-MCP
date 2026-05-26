@@ -1,0 +1,14 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "identifier": "default",
+  "description": "Minimal capability set for AegisForge main window",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "core:window:allow-start-dragging",
+    "shell:deny-execute",
+    "fs:allow-read-dir",
+    "fs:allow-read-file",
+    "fs:deny-write-file"
+  ]
+}

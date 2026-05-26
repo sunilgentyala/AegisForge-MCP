@@ -1,0 +1,27 @@
+[package]
+name    = "aegisforge-core"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name       = "aegisforge_core_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[dependencies]
+tauri              = { version = "2",  features = [] }
+tauri-plugin-shell = "2"
+tauri-plugin-fs    = "2"
+
+serde      = { workspace = true }
+serde_json = { workspace = true }
+tokio      = { workspace = true }
+thiserror  = { workspace = true }
+tracing    = { workspace = true }
+tracing-subscriber = { workspace = true }
+futures    = { workspace = true }
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[features]
+custom-protocol = ["tauri/custom-protocol"]

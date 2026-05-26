@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "aegisforge": {
+      "type": "stdio",
+      "command": "cargo",
+      "args": [
+        "run",
+        "--manifest-path",
+        "mcp-server/Cargo.toml",
+        "--release",
+        "--"
+      ],
+      "env": {
+        "RUST_LOG": "aegisforge_mcp=info,rmcp=warn"
+      }
+    }
+  }
+}

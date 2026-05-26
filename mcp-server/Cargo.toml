@@ -1,0 +1,22 @@
+[package]
+name    = "aegisforge-mcp-server"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "aegisforge-mcp"
+path = "src/main.rs"
+
+[dependencies]
+# Official MCP Rust SDK — provides JSON-RPC, stdio/SSE transports, tool macros
+rmcp = { version = "0.1", features = ["server", "transport-io"] }
+
+tokio      = { workspace = true }
+serde      = { workspace = true }
+serde_json = { workspace = true }
+thiserror  = { workspace = true }
+anyhow     = { workspace = true }
+tracing    = { workspace = true }
+tracing-subscriber = { workspace = true }
+futures    = { workspace = true }
+schemars   = "0.8"
