@@ -13,7 +13,7 @@ use rmcp::{
         CallToolResult, Content, Implementation, ProtocolVersion,
         ServerCapabilities, ServerInfo,
     },
-    tool, tool_handler, Error as McpError, ServerHandler,
+    tool, Error as McpError, ServerHandler,
 };
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -51,7 +51,7 @@ impl AegisToolService {
 
 // ── Tool handler macro implementation ────────────────────────────────────────
 
-#[tool_handler]
+#[tool(tool_box)]
 impl AegisToolService {
     /// Probe TCP ports on a specified IP address.
     ///
@@ -112,6 +112,7 @@ impl AegisToolService {
 
 // ── ServerHandler trait — tells Claude what tools are available ───────────────
 
+#[tool(tool_box)]
 impl ServerHandler for AegisToolService {
     fn get_info(&self) -> ServerInfo {
         ServerInfo {
