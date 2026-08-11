@@ -48,8 +48,8 @@
 |                                                            |
 |  Secure Binary Executor: NO shell — tokenized Vec<String> |
 +============================+===============================+
-                             | JSON-RPC 2.0 over stdio
-                             | (or SSE for remote)
+                             | JSON-RPC 2.0 over stdio (implemented)
+                             | (SSE for remote — planned, not yet implemented)
 +============================+===============================+
 |             MCP Server  (Rust — rmcp crate)               |
 |                                                            |
@@ -76,6 +76,13 @@
 +============================================================+
 ```
 
+**Implementation status (v0.2.0):** the Command Layer, AppState, Secure Binary
+Executor, MCP server's stdio transport, `scan_ports`, and DataSanitizer are all
+implemented and verified to build and run. The Plugin Manager, Sandbox Engine,
+`web_scrape_tool`, and SSE transport are designed (see below) but not yet wired
+into a running code path — see the [Roadmap](#7-roadmap) at the end of this
+document.
+
 ---
 
 ## 2. Rust Tauri v2 Backend — Design Choices
@@ -96,8 +103,10 @@ pub trait ToolPlugin: Send + Sync + 'static {
 }
 ```
 
-Plugins are registered into `PluginRegistry` at startup and dispatched by name. No shell
-commands are ever constructed by string concatenation.
+A `PluginRegistry` that registers `ToolPlugin` implementations at startup and dispatches
+by name is planned but not yet implemented — the trait exists in `src-tauri/src/plugins/mod.rs`,
+but nothing constructs a registry or calls `execute()` on a plugin yet. No shell commands
+are ever constructed by string concatenation.
 
 ---
 
@@ -123,8 +132,8 @@ Each tool carries:
 ```
 
 Transport options:
-- **Development:** stdio (Claude Code spawns the binary directly)
-- **Production:** SSE (HTTP server-sent events for remote multi-agent setups)
+- **Development:** stdio (Claude Code spawns the binary directly) — implemented
+- **Production:** SSE (HTTP server-sent events for remote multi-agent setups) — planned, not yet implemented
 
 ---
 
@@ -169,6 +178,12 @@ External Data (web scrape, file read, network response)
 
 ## 6. Sandboxing Strategy
 
+**Status: implemented as a standalone module, not yet wired into any tool.**
+`scan_ports` currently runs directly on the host via the safe binary executor
+(no shell, absolute paths only) rather than inside a container — see
+[Roadmap](#7-roadmap). The design below is what `execute_in_sandbox()` does
+once a tool calls it.
+
 Tool binaries execute inside **ephemeral Podman/Docker containers**:
 
 ```
@@ -189,3 +204,17 @@ Host OS
 Container image `aegisforge-sandbox` is a minimal distroless image containing only
 the target tool binary. After completion the container is destroyed. No persistent
 filesystem is mounted unless explicitly granted per tool.
+
+---
+
+## 7. Roadmap
+
+Kept in sync with [README.md](README.md#roadmap) and [CHANGELOG.md](CHANGELOG.md).
+
+- [x] Tauri v2 shell, MCP server, and injection-defense pipeline — implemented and verified to build & run end-to-end (v0.2.0)
+- [x] App icon set generated and wired into the bundle config (v0.2.0)
+- [ ] `PluginRegistry` — wire the existing `ToolPlugin` trait up to a real dispatcher
+- [ ] Exercise the Podman/Docker sandbox path end-to-end (`SandboxEngine` is implemented, unused)
+- [ ] `web_scrape_tool` (`fetch_page`) — the first consumer of the sanitizer against genuinely adversarial input
+- [ ] SSE transport for remote multi-agent MCP setups
+- [ ] Signed release build for distribution
