@@ -4,6 +4,7 @@
 [![Tauri](https://img.shields.io/badge/Tauri-v2-blue?logo=tauri)](https://tauri.app/)
 [![MCP](https://img.shields.io/badge/MCP-Model%20Context%20Protocol-purple)](https://modelcontextprotocol.io/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![Version](https://img.shields.io/badge/version-0.2.0-informational)](CHANGELOG.md)
 [![Security Research](https://img.shields.io/badge/Purpose-Security%20Research-red)](#)
 
 **AegisForge-MCP** is a zero-trust AI security research engine that connects Claude (via the Model Context Protocol) to a sandboxed Rust backend for controlled, auditable security operations. Every tool call passes through a prompt injection defense layer before results ever reach the LLM.
@@ -12,7 +13,7 @@
 
 **[Live project site →](https://sunilgentyala.github.io/AegisForge-MCP/)**
 
-> **Status:** early-stage scaffold. The Tauri shell, MCP server, `scan_ports` tool, and injection-defense pipeline are implemented and build cleanly. Sandboxed (Podman/Docker) tool execution and additional tools such as `fetch_page` are designed and wired for, but not yet exercised end-to-end — see [Roadmap](#roadmap).
+> **Status:** early-stage, but verified. The Tauri shell, MCP server, `scan_ports` tool, and injection-defense pipeline are implemented and confirmed to build and run end-to-end — see [Changelog](CHANGELOG.md) for what that verification found and fixed. Sandboxed (Podman/Docker) tool execution and additional tools such as `fetch_page` are designed and wired for, but not yet exercised end-to-end — see [Roadmap](#roadmap).
 
 ---
 
@@ -197,6 +198,17 @@ Independent Security Researcher | IEEE Member
 [sunil.gentyala@ieee.org](mailto:sunil.gentyala@ieee.org) | [GitHub](https://github.com/sunilgentyala)
 
 Research focus: AI system security, zero-trust architectures, LLM tool-use safety.
+
+---
+
+## Changelog
+
+| Version | Date | Summary |
+|---|---|---|
+| [0.2.0](CHANGELOG.md#020--2026-08-11) | 2026-08-11 | First verified build. Fixed 4 real compile-time bugs (missing Cargo features/deps, a wrong `rmcp` macro, a GNU-linker-incompatible crate-type), shipped the app icon set, added README/LICENSE/docs site. |
+| [0.1.0](CHANGELOG.md#010--2026-05-29) | 2026-05-29 | Initial scaffold — Tauri v2 + React shell, MCP server with `scan_ports`, `DataSanitizer` pipeline. Never compiled end-to-end. |
+
+Full details in [CHANGELOG.md](CHANGELOG.md).
 
 ---
 
