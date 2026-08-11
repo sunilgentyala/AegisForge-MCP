@@ -56,6 +56,7 @@
 |  +-------------------+  +-------------------+             |
 |  | recon_tool        |  | web_scrape_tool   |             |
 |  | scan_ports()      |  | fetch_page()      |             |
+|  | (implemented)     |  | (planned)         |             |
 |  +-------------------+  +-------------------+             |
 |                                                            |
 |  +-------------------------------------------------+      |
@@ -90,8 +91,7 @@ Each capability area (recon, OSINT, exploitation framework) implements a `ToolPl
 ```rust
 #[async_trait]
 pub trait ToolPlugin: Send + Sync + 'static {
-    fn name(&self) -> &'static str;
-    fn describe(&self) -> PluginInfo;
+    fn info(&self) -> PluginInfo;
     async fn execute(&self, params: serde_json::Value) -> AegisResult<serde_json::Value>;
 }
 ```

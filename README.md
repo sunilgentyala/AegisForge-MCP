@@ -10,13 +10,17 @@
 
 > Named after Aegis, the protective shield of Zeus. Forged in Rust. Driven by MCP.
 
+**[Live project site →](https://sunilgentyala.github.io/AegisForge-MCP/)**
+
+> **Status:** early-stage scaffold. The Tauri shell, MCP server, `scan_ports` tool, and injection-defense pipeline are implemented and build cleanly. Sandboxed (Podman/Docker) tool execution and additional tools such as `fetch_page` are designed and wired for, but not yet exercised end-to-end — see [Roadmap](#roadmap).
+
 ---
 
 ## Why AegisForge
 
 Most AI security tools pass raw tool output directly back to the language model. That design is the attack surface. A malicious web page, a crafted network response, or a poisoned file can embed instructions that hijack the LLM's next action.
 
-AegisForge treats every byte of external data as untrusted. The `DataSanitizer` pipeline strips control characters, enforces length caps, blocks injection trigger phrases, and wraps output in a structured envelope before the model ever sees it. Tool execution itself runs inside ephemeral, capability-dropped containers that are destroyed on exit.
+AegisForge treats every byte of external data as untrusted. The `DataSanitizer` pipeline strips control characters, enforces length caps, blocks injection trigger phrases, and wraps output in a structured envelope before the model ever sees it. Tool execution itself is designed to run inside ephemeral, capability-dropped containers that are destroyed on exit.
 
 This is not a convenience wrapper around existing CLI tools. It is a research-grade platform designed from the ground up for safe, explainable AI-driven security analysis.
 
@@ -52,8 +56,8 @@ Tauri v2 Core (Rust)
     | JSON-RPC 2.0 over stdio
     |
 MCP Server (Rust — rmcp crate)
- +-- recon_tool    (port scanning)
- +-- web_scrape_tool
+ +-- recon_tool    (port scanning — implemented)
+ +-- web_scrape_tool (planned)
  +-- DataSanitizer (every output sanitized before LLM sees it)
     |
     | HTTPS / Anthropic API
@@ -72,7 +76,7 @@ Full data-flow diagrams, state design, sandboxing strategy, and the prompt injec
 - [Rust 1.78+](https://rustup.rs/)
 - [Node.js 20+](https://nodejs.org/)
 - [Tauri CLI v2](https://tauri.app/start/create-project/)
-- Podman or Docker (for sandboxed tool execution)
+- Podman or Docker (optional — only needed for sandboxed tool execution)
 - Claude API key ([Anthropic Console](https://console.anthropic.com/))
 
 ### Run in Development
@@ -84,6 +88,10 @@ cd AegisForge-MCP
 
 # Install frontend dependencies
 npm install
+
+# App icons aren't checked in yet — generate them once from a source image
+# before your first `tauri build` (dev mode below doesn't need this):
+npx tauri icon path/to/1024x1024-source.png
 
 # Start the Tauri dev environment (compiles Rust + starts Vite)
 npm run tauri dev
@@ -107,7 +115,7 @@ The `.mcp.json` at the repo root is pre-configured. Open this repo in Claude Cod
 
 ## MCP Tools
 
-### `scan_ports`
+### `scan_ports` — implemented
 
 Probe TCP ports on an authorized target.
 
@@ -119,13 +127,13 @@ Probe TCP ports on an authorized target.
 }
 ```
 
-Returns open ports, banner data, and elapsed time. Maximum 100 ports per call enforced at the schema level.
+Returns open/closed status and a best-effort service hint per port. Maximum 100 ports per call enforced at the schema level. Only bare IP addresses are accepted (no hostnames, no DNS resolution) and loopback/multicast targets are rejected before any network activity.
 
-### `fetch_page`
+### `fetch_page` — planned
 
-Retrieve and sanitize web page content before passing it to the LLM.
+Retrieve and sanitize web page content before passing it to the LLM. This will be the first tool to exercise the sanitizer against genuinely adversarial (attacker-controlled) input rather than structured local data. See [Roadmap](#roadmap).
 
-All output from every tool passes through `DataSanitizer` before the MCP server returns the result. The LLM receives structured, bounded, injection-free data.
+All output from every implemented tool passes through `DataSanitizer` before the MCP server returns the result. The LLM receives structured, bounded, injection-free data.
 
 ---
 
@@ -143,7 +151,7 @@ AegisForge enforces defense at three layers.
 
 The LLM system prompt explicitly instructs Claude to treat content inside that envelope as data, not instructions.
 
-**Layer 3 — Ephemeral containers.** Tool binaries execute in distroless Podman/Docker containers with `--cap-drop=ALL`, `--read-only`, `--memory=512m`, and `--security-opt=no-new-privileges`. Containers are destroyed after each tool invocation. No persistent filesystem is mounted unless explicitly granted per tool.
+**Layer 3 — Ephemeral containers.** Tool binaries are designed to execute in distroless Podman/Docker containers with `--cap-drop=ALL`, `--read-only`, `--memory=512m`, and `--security-opt=no-new-privileges`, destroyed after each invocation. This sandbox path is implemented (`src-tauri/src/plugins/sandbox.rs`) but not yet wired into a running tool — `scan_ports` currently runs directly on the host via the safe binary executor (no shell, absolute paths only), not inside a container.
 
 ---
 
@@ -157,13 +165,28 @@ The LLM system prompt explicitly instructs Claude to treat content inside that e
 
 ---
 
+## Project Structure
+
+```
+src/                   React UI (Terminal, AI trace viewer, security dashboard, Zustand store)
+src-tauri/              Tauri v2 Rust core — commands, state, sandbox engine, plugin trait
+mcp-server/             Standalone MCP server (rmcp) — tool registration + DataSanitizer
+ARCHITECTURE.md         Full design doc: data-flow diagram, injection-mitigation pipeline, sandboxing
+docs/                   GitHub Pages project site
+```
+
+---
+
 ## Roadmap
 
+- [ ] Exercise the Podman/Docker sandbox path end-to-end (implemented, not yet wired into a running tool)
+- [ ] `fetch_page` (`web_scrape_tool`) as the second MCP tool
 - [ ] OSINT module (WHOIS, ASN, certificate transparency)
 - [ ] CVE cross-reference lookup via NVD API
 - [ ] SSE transport for remote multi-agent deployments
 - [ ] Signed container images with pinned digests
 - [ ] Export session report as structured JSON
+- [ ] Ship real app icons and a signed release build
 
 ---
 
