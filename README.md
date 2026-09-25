@@ -212,6 +212,24 @@ Full details in [CHANGELOG.md](CHANGELOG.md).
 
 ---
 
+## How to Cite
+
+If you use AegisForge-MCP in your research, please cite the software:
+
+```bibtex
+@software{gentyala2026aegisforge,
+  author    = {Gentyala, Sunil},
+  title     = {AegisForge-MCP},
+  year      = {2026},
+  version   = {0.2.0},
+  url       = {https://github.com/sunilgentyala/AegisForge-MCP}
+}
+```
+
+Machine-readable metadata is in [`CITATION.cff`](CITATION.cff); GitHub shows it under "Cite this repository".
+
+---
+
 ## License
 
 MIT. See [LICENSE](LICENSE) for details.

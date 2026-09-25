@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: If you use this software in your research, please cite it as below.
+type: software
+title: AegisForge-MCP
+version: 0.2.0
+date-released: '2026-08-11'
+authors:
+- family-names: Gentyala
+  given-names: Sunil
+  affiliation: HCLTech (HCL America Inc.), Dallas, TX, USA
+  orcid: https://orcid.org/0009-0005-2642-3479
+  email: sunil.gentyala@ieee.org
+repository-code: https://github.com/sunilgentyala/AegisForge-MCP
+url: https://sunilgentyala.github.io/AegisForge-MCP/
+license: MIT
+abstract: 'Zero-trust AI security research engine built on MCP, Tauri v2, and Rust: with prompt
+  injection defense and sandboxed tool execution'
+keywords:
+- ai-security
+- claude
+- cybersecurity
+- llm-security
+- mcp
+- model-context-protocol
+- prompt-injection
+- react
+- rust
+- security-research
